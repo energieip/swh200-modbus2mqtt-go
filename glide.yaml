@@ -1,0 +1,13 @@
+package: github.com/energieip/swh200-modbus2mqtt-go
+import:
+- package: github.com/energieip/common-components-go
+  subpackages:
+  - pkg/dnanosense
+  - pkg/dwago
+  - pkg/network
+  - pkg/pconst
+  - pkg/service
+  - pkg/tools
+- package: github.com/goburrow/modbus
+- package: github.com/orcaman/concurrent-map
+- package: github.com/romana/rlog
