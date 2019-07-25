@@ -43,6 +43,7 @@ func (s *Service) onWagoSetup(conf dwago.WagoDef) {
 	for _, v := range conf.Nanosenses {
 		nano := core.NanoDump{}
 		nano.Label = v.Label
+		nano.Mac = v.Mac
 		nano.ModbusIDCO2 = v.CO2
 		nano.ModbusIDCOV = v.COV
 		nano.ModbusIDHygro = v.Hygrometry
@@ -65,7 +66,9 @@ func (s *Service) onWagoSetup(conf dwago.WagoDef) {
 		progs = append(progs, cron)
 	}
 	wago.CronJobs = progs
-	wago.IsConfigured = true
+	if wago.Mac != "" {
+		wago.IsConfigured = true
+	}
 	s.wagos.Set(conf.Mac, wago)
 }
 
@@ -107,6 +110,7 @@ func (s *Service) onWagoUpdate(conf dwago.WagoDef) {
 	for _, v := range conf.Nanosenses {
 		nano := core.NanoDump{}
 		nano.Label = v.Label
+		nano.Mac = v.Mac
 		nano.FriendlyName = v.FriendlyName
 		nano.ModbusIDCO2 = v.CO2
 		nano.ModbusIDCOV = v.COV
@@ -153,12 +157,13 @@ func (s *Service) sendHello(driver core.WagoDump) {
 	for _, v := range driver.Nanosenses {
 		nano := dnanosense.Nanosense{}
 		nano.Label = v.Label
+		nano.Mac = v.Mac
 		nano.Group = v.Group
 		nano.Cluster = v.Cluster
 		nano.DumpFrequency = v.DumpFrequency
 		nano.Error = v.Error
 		dump, _ = tools.ToJSON(nano)
-		s.local.SendCommand("/read/nano/"+driver.Label+"/"+pconst.UrlHello, dump)
+		s.local.SendCommand("/read/nano/"+driver.Mac+"/"+pconst.UrlHello, dump)
 	}
 }
 
@@ -204,9 +209,10 @@ func (s *Service) updateWagoStatus(driver core.WagoDump) {
 			nano.Cluster = v.Cluster
 			nano.DumpFrequency = v.DumpFrequency
 			nano.Label = v.Label
+			nano.Mac = v.Mac
 			nano.Error = v.Error
 			dump, _ := tools.ToJSON(nano)
-			s.local.SendCommand("/read/nano/"+driver.Label+"/"+pconst.UrlStatus, dump)
+			s.local.SendCommand("/read/nano/"+driver.Mac+"/"+pconst.UrlStatus, dump)
 		}
 		s.wagos.Set(driver.Mac, driver)
 		return
@@ -218,6 +224,7 @@ func (s *Service) updateWagoStatus(driver core.WagoDump) {
 		errorRead := false
 		nano := dnanosense.Nanosense{}
 		nano.Label = v.Label
+		nano.Mac = v.Mac
 		nano.Cluster = v.Cluster
 		nano.Group = v.Group
 		nano.FriendlyName = v.FriendlyName
@@ -262,7 +269,7 @@ func (s *Service) updateWagoStatus(driver core.WagoDump) {
 			nano.Error = 0
 		}
 		dump, _ := tools.ToJSON(nano)
-		s.local.SendCommand("/read/nano/"+driver.Label+"/"+pconst.UrlStatus, dump)
+		s.local.SendCommand("/read/nano/"+nano.Mac+"/"+pconst.UrlStatus, dump)
 		nanos = append(nanos, v)
 	}
 	driver.Nanosenses = nanos
