@@ -141,18 +141,20 @@ func (s *Service) onWagoUpdate(conf dwago.WagoDef) {
 	}
 	wago.CronJobs = progs
 	wago.IsConfigured = true
+	wago.DumpFrequency = freq
 	wago.Error = 1
 	s.wagos.Set(conf.Mac, wago)
 }
 
 func (s *Service) sendHello(driver core.WagoDump) {
 	driverHello := dwago.Wago{
-		Mac:          driver.Mac,
-		IP:           driver.IP,
-		Cluster:      driver.Cluster,
-		IsConfigured: false,
-		Protocol:     "modbus",
-		FriendlyName: driver.FriendlyName,
+		Mac:           driver.Mac,
+		IP:            driver.IP,
+		Cluster:       driver.Cluster,
+		IsConfigured:  false,
+		Protocol:      "modbus",
+		FriendlyName:  driver.FriendlyName,
+		DumpFrequency: driver.DumpFrequency,
 	}
 	dump, _ := tools.ToJSON(driverHello)
 
@@ -175,12 +177,13 @@ func (s *Service) sendHello(driver core.WagoDump) {
 
 func (s *Service) sendDump(driver core.WagoDump) {
 	driverHello := dwago.Wago{
-		Mac:          driver.Mac,
-		IP:           driver.IP,
-		Cluster:      driver.Cluster,
-		IsConfigured: driver.IsConfigured,
-		Protocol:     "modbus",
-		FriendlyName: driver.FriendlyName,
+		Mac:           driver.Mac,
+		IP:            driver.IP,
+		Cluster:       driver.Cluster,
+		IsConfigured:  driver.IsConfigured,
+		Protocol:      "modbus",
+		FriendlyName:  driver.FriendlyName,
+		DumpFrequency: driver.DumpFrequency,
 	}
 	dump, err := tools.ToJSON(driverHello)
 	if err != nil {

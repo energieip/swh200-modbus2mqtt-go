@@ -1,12 +1,12 @@
 hash: 7857bf7e5befba8140978ca64d5f9d12e96539d03dd6bb02253fb979633d9fc4
-updated: 2019-07-25T11:54:24.154394193+02:00
+updated: 2019-07-26T18:33:18.359624064+02:00
 imports:
 - name: github.com/eclipse/paho.mqtt.golang
   version: 93c8a06e1e6dfeb17dd18a44e3e2f4e1db778237
   subpackages:
   - packets
 - name: github.com/energieip/common-components-go
-  version: 7d66a81c77269b735b0b56cbd51f2dd838aa9c4c
+  version: f875d680d80d94fb12562215a49baca8e8a6412a
   subpackages:
   - pkg/dnanosense
   - pkg/dwago

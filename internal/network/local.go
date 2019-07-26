@@ -112,7 +112,7 @@ func (net ServerNetwork) SendCommand(topic, content string) error {
 	if err != nil {
 		rlog.Error("Cannot send : " + content + " on: " + topic + " Error: " + err.Error())
 	} else {
-		rlog.Info("Sent : " + content + " on: " + topic)
+		rlog.Debug("Sent : " + content + " on: " + topic)
 	}
 	return err
 }
