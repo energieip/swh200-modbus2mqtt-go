@@ -12,6 +12,9 @@ import (
 
 func (s *Service) onWagoSetup(conf dwago.WagoDef) {
 	var wago core.WagoDump
+	if conf.Mac == "" {
+		return
+	}
 	d, _ := s.wagos.Get(conf.Mac)
 	if d != nil {
 		status, _ := core.ToWagoDump(d)
@@ -73,6 +76,9 @@ func (s *Service) onWagoSetup(conf dwago.WagoDef) {
 }
 
 func (s *Service) onWagoUpdate(conf dwago.WagoDef) {
+	if conf.Mac == "" {
+		return
+	}
 	d, _ := s.wagos.Get(conf.Mac)
 	if d == nil {
 		return
