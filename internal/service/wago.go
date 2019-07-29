@@ -47,6 +47,7 @@ func (s *Service) onWagoSetup(conf dwago.WagoDef) {
 		nano := core.NanoDump{}
 		nano.Label = v.Label
 		nano.Mac = v.Mac
+		nano.IP = wago.IP
 		nano.ModbusIDCO2 = v.CO2
 		nano.ModbusIDCOV = v.COV
 		nano.ModbusIDHygro = v.Hygrometry
@@ -69,7 +70,7 @@ func (s *Service) onWagoSetup(conf dwago.WagoDef) {
 		progs = append(progs, cron)
 	}
 	wago.CronJobs = progs
-	if wago.Mac != "" {
+	if wago.Mac != "" && len(wago.Nanosenses) != 0 {
 		wago.IsConfigured = true
 	}
 	s.wagos.Set(conf.Mac, wago)
@@ -117,6 +118,7 @@ func (s *Service) onWagoUpdate(conf dwago.WagoDef) {
 		nano := core.NanoDump{}
 		nano.Label = v.Label
 		nano.Mac = v.Mac
+		nano.IP = wago.IP
 		nano.FriendlyName = v.FriendlyName
 		nano.ModbusIDCO2 = v.CO2
 		nano.ModbusIDCOV = v.COV
@@ -219,6 +221,7 @@ func (s *Service) updateWagoStatus(driver core.WagoDump) {
 			nano.DumpFrequency = v.DumpFrequency
 			nano.Label = v.Label
 			nano.Mac = v.Mac
+			nano.IP = v.IP
 			nano.Error = v.Error
 			dump, _ := tools.ToJSON(nano)
 			s.local.SendCommand("/read/nano/"+driver.Mac+"/"+pconst.UrlStatus, dump)
@@ -235,6 +238,7 @@ func (s *Service) updateWagoStatus(driver core.WagoDump) {
 		nano.Label = v.Label
 		nano.Mac = v.Mac
 		nano.Cluster = v.Cluster
+		nano.IP = v.IP
 		nano.Group = v.Group
 		nano.FriendlyName = v.FriendlyName
 		nano.DumpFrequency = v.DumpFrequency
