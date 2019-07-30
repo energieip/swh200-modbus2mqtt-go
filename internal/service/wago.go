@@ -178,7 +178,7 @@ func (s *Service) sendHello(driver core.WagoDump) {
 }
 
 func (s *Service) sendDump(driver core.WagoDump) {
-	driverHello := dwago.Wago{
+	driverStatus := dwago.Wago{
 		Mac:           driver.Mac,
 		IP:            driver.IP,
 		Cluster:       driver.Cluster,
@@ -186,8 +186,20 @@ func (s *Service) sendDump(driver core.WagoDump) {
 		Protocol:      "modbus",
 		FriendlyName:  driver.FriendlyName,
 		DumpFrequency: driver.DumpFrequency,
+		Error:         driver.Error,
+		Label:         &driver.Label,
 	}
-	dump, err := tools.ToJSON(driverHello)
+	var crons []dwago.CronJobStatus
+	for _, cron := range driver.CronJobs {
+		c := dwago.CronJobStatus{
+			Group:  cron.Group,
+			Status: cron.Content,
+			Action: cron.Action,
+		}
+		crons = append(crons, c)
+	}
+	driverStatus.CronJobs = crons
+	dump, err := tools.ToJSON(driverStatus)
 	if err != nil {
 		rlog.Errorf("Could not dump Wago %v status %v", driver.Mac, err.Error())
 		return
@@ -208,6 +220,9 @@ func (s *Service) updateWagoStatus(driver core.WagoDump) {
 	if driver.IP == "" {
 		return
 	}
+	quantity := uint16(1)
+	var nanos []core.NanoDump
+	driver.Error = 0
 	handler := modbus.NewTCPClientHandler(driver.IP + ":502")
 	err := handler.Connect()
 	defer handler.Close()
@@ -224,14 +239,30 @@ func (s *Service) updateWagoStatus(driver core.WagoDump) {
 			nano.IP = v.IP
 			nano.Error = v.Error
 			dump, _ := tools.ToJSON(nano)
+			nanos = append(nanos, v)
 			s.local.SendCommand("/read/nano/"+driver.Mac+"/"+pconst.UrlStatus, dump)
 		}
+		driver.Nanosenses = nanos
 		s.wagos.Set(driver.Mac, driver)
 		return
 	}
 	client := modbus.NewClient(handler)
 
-	var nanos []core.NanoDump
+	var cronJobs []core.CronJobDump
+	for _, cron := range driver.CronJobs {
+		res := core.CronJobDump{}
+		results, err := client.ReadHoldingRegisters(uint16(cron.ModbusID), quantity)
+		if err != nil {
+			rlog.Errorf("Cannot read on (%v) %v : %v", driver.Label, cron.ModbusID, err.Error())
+			driver.Error = 1
+		}
+		res.Action = cron.Action
+		res.Group = cron.Group
+		res.Content = bytes2int(results)
+		cronJobs = append(cronJobs, res)
+	}
+	driver.CronJobs = cronJobs
+
 	for _, v := range driver.Nanosenses {
 		errorRead := false
 		nano := dnanosense.Nanosense{}
@@ -242,7 +273,6 @@ func (s *Service) updateWagoStatus(driver core.WagoDump) {
 		nano.Group = v.Group
 		nano.FriendlyName = v.FriendlyName
 		nano.DumpFrequency = v.DumpFrequency
-		quantity := uint16(1)
 
 		results, err := client.ReadHoldingRegisters(uint16(v.ModbusIDCO2), quantity)
 		if err != nil {
