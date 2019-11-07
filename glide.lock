@@ -1,12 +1,12 @@
 hash: 7857bf7e5befba8140978ca64d5f9d12e96539d03dd6bb02253fb979633d9fc4
-updated: 2019-07-29T14:34:17.792379691+02:00
+updated: 2019-11-07T14:53:09.740958146+01:00
 imports:
 - name: github.com/eclipse/paho.mqtt.golang
-  version: 93c8a06e1e6dfeb17dd18a44e3e2f4e1db778237
+  version: 825e8b38f891bed20340ddb2460dd5c541ab0542
   subpackages:
   - packets
 - name: github.com/energieip/common-components-go
-  version: e7a84753caa288a689d309521c1c5e35c0618291
+  version: 4a42982a3d142dc82d6cf758d3e40662b14bd3a9
   subpackages:
   - pkg/dnanosense
   - pkg/dwago
@@ -19,13 +19,13 @@ imports:
 - name: github.com/goburrow/serial
   version: 5efbe925ecf714f8ba147bf2226f2e7afc7111bc
 - name: github.com/gorilla/websocket
-  version: ae1634f6a98965ded3b8789c626cb4e0bd78c3de
+  version: c3e18be99d19e6b3e8f1559eea2c161a665c4b6b
 - name: github.com/orcaman/concurrent-map
-  version: 2693aad1ed7517c2bb5b3a42cb8fde88b941d89d
+  version: 8c72a8bb44f6cfcff2abae8ebcbaaaf883331363
 - name: github.com/romana/rlog
   version: f018bc92e7d71f27c04e04cbf008860416c21d01
 - name: golang.org/x/net
-  version: ca1201d0de80cfde86cb01aea620983605dfe99b
+  version: a882066a44e04a21d46e51451c71e131344e830e
   subpackages:
   - internal/socks
   - proxy
