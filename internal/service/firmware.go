@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	DefaultTimerDump = 1000
+	DefaultTimerDump = 10000
 )
 
 //Service content

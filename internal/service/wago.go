@@ -37,7 +37,7 @@ func (s *Service) onWagoSetup(conf dwago.WagoDef) {
 	if conf.Label != nil {
 		wago.Label = *conf.Label
 	}
-	freq := 1000
+	freq := 10000
 	if conf.DumpFrequency != nil {
 		freq = *conf.DumpFrequency
 	}
@@ -108,7 +108,7 @@ func (s *Service) onWagoUpdate(conf dwago.WagoDef) {
 	if conf.IsConfigured != nil {
 		wago.IsConfigured = *conf.IsConfigured
 	}
-	freq := 1000
+	freq := 10000
 	if conf.DumpFrequency != nil {
 		freq = *conf.DumpFrequency
 	}
