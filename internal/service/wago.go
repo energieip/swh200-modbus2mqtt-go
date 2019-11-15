@@ -62,11 +62,11 @@ func (s *Service) onWagoSetup(conf dwago.WagoDef) {
 	wago.Nanosenses = nanos
 	wago.Mac = conf.Mac
 	var progs []core.CronJobDump
-	for _, v := range conf.CronJobs {
+	for _, c := range conf.CronJobs {
 		cron := core.CronJobDump{}
-		cron.ModbusID = v.ModbusID
-		cron.Group = v.Group
-		cron.Action = v.Action
+		cron.ModbusID = c.ModbusID
+		cron.Group = c.Group
+		cron.Action = c.Action
 		progs = append(progs, cron)
 	}
 	wago.CronJobs = progs
@@ -248,7 +248,7 @@ func (s *Service) updateWagoStatus(driver core.WagoDump) {
 	}
 	client := modbus.NewClient(handler)
 
-	var cronJobs []core.CronJobDump
+	// var cronJobs []core.CronJobDump
 	for _, cron := range driver.CronJobs {
 		res := core.CronJobDump{}
 		results, err := client.ReadHoldingRegisters(uint16(cron.ModbusID), quantity)
@@ -259,9 +259,7 @@ func (s *Service) updateWagoStatus(driver core.WagoDump) {
 		res.Action = cron.Action
 		res.Group = cron.Group
 		res.Content = bytes2int(results)
-		cronJobs = append(cronJobs, res)
 	}
-	driver.CronJobs = cronJobs
 
 	for _, v := range driver.Nanosenses {
 		errorRead := false
