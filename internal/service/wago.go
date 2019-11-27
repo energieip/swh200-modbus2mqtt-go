@@ -18,7 +18,11 @@ func (s *Service) onWagoSetup(conf dwago.WagoDef) {
 	d, _ := s.wagos.Get(conf.Mac)
 	if d != nil {
 		status, _ := core.ToWagoDump(d)
-		if status == nil || status.IsConfigured {
+		if status == nil {
+			return
+		}
+		if status.IsConfigured {
+			s.onWagoUpdate(conf)
 			return
 		}
 		wago = *status
